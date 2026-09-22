@@ -4,7 +4,7 @@
  */
 window.WP_CONFIG = {
   APP_NAME: 'WellPulse GWS',
-  APP_VERSION: '1.0.0',
+  APP_VERSION: '1.0.1',
   // Apps Script Web App URL (ends with /exec). Leave empty until deployed.
   API_URL: 'https://script.google.com/macros/s/AKfycbwd-libdKQm1InaITlSUZQ9bThLm_dQP_nmgY2FhS9c7r3sGajdVjIOqJ282z0fv0PQ/exec',
   // Shared project token; must match TOKEN in backend/Code.gs.

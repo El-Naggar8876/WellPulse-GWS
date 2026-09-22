@@ -1,5 +1,7 @@
 # WellPulse GWS
 
+**Live app:** <https://el-naggar8876.github.io/WellPulse-GWS/app/> · **Enrolment cards:** <https://el-naggar8876.github.io/WellPulse-GWS/app/admin/enroll.html> · Backend: Apps Script → Google Sheet *WellPulse GWS Readings* (deployed 22 Sep 2026).
+
 Offline-first mobile app for farmers in the GWS project to log groundwater **EC (salinity)** and **temperature** from a handheld meter, then send the readings to a shared Google Sheet whenever the phone has internet.
 
 - **Installs from a QR card** – no app store. Scan, tap Install, done.

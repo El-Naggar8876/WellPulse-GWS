@@ -469,6 +469,8 @@
   async function afterProfile() {
     setLang(state.profile.lang || C.DEFAULT_LANG);
     const lim = await DB.kvGet('limits'); if (lim) state.limits = lim;
+    // A reading left in 'sending' (app closed mid-upload) must be retried, never stuck.
+    for (const r of await DB.byStatus('sending')) { r.status = 'pending'; await DB.put(r); }
     showView('home');
     if (navigator.onLine !== false && S.hasServer()) { doSync(true); refreshConfig().catch(() => {}); }
   }
