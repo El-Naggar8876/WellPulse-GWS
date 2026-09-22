@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <meta name="theme-color" content="#0b5e6b" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#071e24" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="WellPulse">
+  <meta name="description" content="WellPulse GWS – offline-first groundwater EC and temperature logging for farmers.">
+  <title>WellPulse GWS</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app" class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="url(#lg)"/>
+        <path d="M8 27c4-5 8-5 12 0s8 5 12 0 8-5 12 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <path d="M8 34c4-5 8-5 12 0s8 5 12 0 8-5 12 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+        <path d="M24 8l5 8-5 9-5-9z" fill="#fff"/>
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22b8cf"/><stop offset="1" stop-color="#0b5e6b"/></linearGradient></defs>
+      </svg>
+      <span class="brand-name">WellPulse <small>GWS</small></span>
+    </div>
+    <button class="net" id="netBadge" type="button" aria-live="polite"><span class="dot"></span><span id="netText"></span></button>
+  </header>
+
+  <main id="views" class="views">
+
+    <!-- ENROL -->
+    <section id="view-enroll" class="view" hidden>
+      <div class="hero">
+        <div class="hero-art"><div class="ring r1"></div><div class="ring r2"></div><div class="drop"></div></div>
+        <h1 data-i18n="enroll_title"></h1>
+        <p class="muted" data-i18n="enroll_sub"></p>
+      </div>
+      <div class="card">
+        <label class="field"><span data-i18n="enroll_name"></span><input id="enrollName" type="text" autocomplete="name"></label>
+        <label class="field"><span data-i18n="enroll_id"></span><input id="enrollId" type="text" autocapitalize="characters"></label>
+        <div class="seg" id="enrollLang">
+          <button type="button" data-lang="ar" class="on">العربية</button>
+          <button type="button" data-lang="en">English</button>
+        </div>
+        <button class="btn primary big" id="enrollGo" type="button" data-i18n="enroll_go"></button>
+      </div>
+    </section>
+
+    <!-- HOME -->
+    <section id="view-home" class="view" hidden>
+      <div class="greet">
+        <div><span class="muted" data-i18n="welcome"></span> <b id="homeName"></b></div>
+        <div class="muted small" id="homeDate"></div>
+      </div>
+
+      <div class="start-wrap">
+        <p class="ready" data-i18n="ready_q"></p>
+        <button class="start" id="btnStart" type="button" aria-label="Start">
+          <span class="pulse p1"></span><span class="pulse p2"></span>
+          <span class="start-face">
+            <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z" fill="currentColor" opacity=".9"/></svg>
+            <span data-i18n="start"></span>
+          </span>
+        </button>
+      </div>
+
+      <div class="card sync" id="syncCard">
+        <div class="sync-row">
+          <div class="sync-icon" id="syncIcon"></div>
+          <div class="sync-text"><div id="syncTitle"></div><div class="muted small" id="syncSub"></div></div>
+        </div>
+        <button class="btn accent" id="btnSend" type="button"><span data-i18n="send_now"></span></button>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="card" id="lastCard">
+        <div class="card-title" data-i18n="last_reading"></div>
+        <div id="lastBody"></div>
+      </div>
+
+      <div class="card" id="trendCard">
+        <div class="card-title" data-i18n="trend"></div>
+        <div id="trendBody"></div>
+      </div>
+    </section>
+
+    <!-- CAPTURE -->
+    <section id="view-capture" class="view" hidden>
+      <div class="cap-head">
+        <button class="icon-btn" id="btnCancel" type="button" aria-label="Back">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="cap-time" id="capTime"></div>
+      </div>
+
+      <div class="card" id="wellCard">
+        <div class="card-title" data-i18n="choose_well"></div>
+        <div class="chips" id="wellChips"></div>
+        <div class="addwell" id="addWellRow" hidden>
+          <input id="newWellName" type="text" data-i18n-ph="well_name_ph">
+          <button class="btn small" id="btnAddWell" type="button" data-i18n="add_well"></button>
+        </div>
+      </div>
+
+      <div class="card measure">
+        <div class="mlabel"><span data-i18n="ec_label"></span><span class="muted small" data-i18n="ec_hint"></span></div>
+        <div class="minput">
+          <input id="ecInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" dir="ltr">
+          <div class="seg units" id="unitSeg"></div>
+        </div>
+        <div class="err" id="ecErr"></div>
+      </div>
+
+      <div class="card measure">
+        <div class="mlabel"><span data-i18n="temp_label"></span><span class="muted small" data-i18n="temp_hint"></span></div>
+        <div class="minput">
+          <input id="tempInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0.0" dir="ltr">
+          <div class="unit-fixed">°C</div>
+        </div>
+        <div class="err" id="tempErr"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" data-i18n="extras"></div>
+        <div class="extras">
+          <button class="extra" id="btnGps" type="button">
+            <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <span id="gpsLabel" data-i18n="add_gps"></span>
+          </button>
+          <button class="extra" id="btnPhoto" type="button">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <span id="photoLabel" data-i18n="add_photo"></span>
+          </button>
+          <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
+        </div>
+        <div class="photo-preview" id="photoPreview" hidden><img id="photoImg" alt=""><button class="btn small ghost" id="btnPhotoRemove" type="button" data-i18n="remove"></button></div>
+        <label class="field"><span data-i18n="note"></span><input id="noteInput" type="text" data-i18n-ph="note_ph" maxlength="140"></label>
+      </div>
+
+      <button class="btn primary big save" id="btnSave" type="button" data-i18n="save"></button>
+      <p class="muted small center" data-i18n="digits_hint"></p>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="view-history" class="view" hidden>
+      <h2 data-i18n="history"></h2>
+      <div id="histList"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="view-settings" class="view" hidden>
+      <h2 data-i18n="settings"></h2>
+      <div class="card">
+        <div class="card-title" data-i18n="language"></div>
+        <div class="seg" id="langSeg">
+          <button type="button" data-lang="ar">العربية</button>
+          <button type="button" data-lang="en">English</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" data-i18n="farmer"></div>
+        <div class="kv"><span data-i18n="farmer"></span><b id="setName"></b></div>
+        <div class="kv"><span data-i18n="farmer_id"></span><b id="setId" dir="ltr"></b></div>
+      </div>
+      <div class="card">
+        <div class="card-title" data-i18n="wells"></div>
+        <div class="chips static" id="setWells"></div>
+        <div class="addwell">
+          <input id="setNewWell" type="text" data-i18n-ph="well_name_ph">
+          <button class="btn small" id="setAddWell" type="button" data-i18n="add_well"></button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" data-i18n="server"></div>
+        <div class="kv"><span data-i18n="server"></span><b id="setServer" dir="ltr" class="ellipsis"></b></div>
+        <button class="btn ghost" id="btnRefreshConfig" type="button" data-i18n="refresh_config"></button>
+      </div>
+      <div class="card">
+        <div class="card-title" data-i18n="about"></div>
+        <div class="kv"><span data-i18n="version"></span><b id="setVersion" dir="ltr"></b></div>
+        <p class="muted small" data-i18n="tagline"></p>
+        <button class="btn danger ghost" id="btnReset" type="button" data-i18n="reset_app"></button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" id="tabbar" hidden>
+    <button type="button" data-view="home" class="on">
+      <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span data-i18n="home"></span>
+    </button>
+    <button type="button" data-view="history">
+      <svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span data-i18n="history"></span><span class="badge" id="histBadge" hidden></span>
+    </button>
+    <button type="button" data-view="settings">
+      <svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      <span data-i18n="settings"></span>
+    </button>
+  </nav>
+
+  <!-- SUCCESS OVERLAY -->
+  <div id="overlay" class="overlay" hidden>
+    <div class="overlay-card">
+      <div class="wave-wrap">
+        <svg class="check" viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" fill="none"/><path d="M14 27l8 8 16-16" fill="none"/></svg>
+        <svg class="wave" viewBox="0 0 120 28" preserveAspectRatio="none"><path d="M0 14c10-8 20-8 30 0s20 8 30 0 20-8 30 0 20 8 30 0v14H0z"/></svg>
+      </div>
+      <h2 id="ovTitle"></h2>
+      <p class="muted" id="ovSub"></p>
+      <div class="ov-actions">
+        <button class="btn primary big" id="ovSend" type="button"></button>
+        <button class="btn ghost" id="ovLater" type="button" data-i18n="later"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERIC MODAL -->
+  <div id="modal" class="overlay" hidden>
+    <div class="overlay-card">
+      <h3 id="mTitle"></h3>
+      <div id="mBody" class="mbody"></div>
+      <div class="ov-actions" id="mActions"></div>
+    </div>
+  </div>
+
+  <div id="installBanner" class="banner" hidden>
+    <div><b data-i18n="install_title"></b><div class="small" data-i18n="install_sub"></div><div class="small" id="iosHint" hidden data-i18n="install_ios"></div></div>
+    <div class="banner-actions"><button class="btn small primary" id="btnInstall" type="button" data-i18n="install_btn"></button><button class="btn small ghost" id="btnInstallLater" type="button" data-i18n="install_later"></button></div>
+  </div>
+  <div id="updateBanner" class="banner" hidden>
+    <div><b data-i18n="update_available"></b></div>
+    <div class="banner-actions"><button class="btn small primary" id="btnUpdate" type="button" data-i18n="update_now"></button></div>
+  </div>
+  <div id="toast" class="toast" hidden></div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/util.js"></script>
+<script src="js/db.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

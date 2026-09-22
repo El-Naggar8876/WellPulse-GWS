@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WellPulse GWS – Farmer enrolment cards</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+  :root { --p: #0b5e6b; --a: #22b8cf; --line: #d6e5e9; --bg: #eef6f8; }
+  body { font-family: system-ui, "Segoe UI", Roboto, "Noto Sans Arabic", sans-serif; margin: 0; background: var(--bg); color: #0f2a30; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  h1 { margin: 0 0 4px; color: var(--p); } .muted { color: #5c7a82; }
+  .panel { background: #fff; border-radius: 16px; padding: 18px; box-shadow: 0 6px 24px rgba(11,94,107,.12); margin: 14px 0; }
+  label { display: block; font-weight: 600; margin: 10px 0 4px; }
+  input, textarea, select { width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; font: inherit; box-sizing: border-box; }
+  textarea { min-height: 120px; font-family: ui-monospace, Consolas, monospace; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } @media (max-width: 700px) { .row { grid-template-columns: 1fr; } }
+  button { background: linear-gradient(135deg, #0e7c86, var(--p)); color: #fff; border: 0; border-radius: 12px; padding: 12px 18px; font: inherit; font-weight: 700; cursor: pointer; margin-top: 12px; }
+  button.ghost { background: #fff; color: var(--p); border: 1.5px solid var(--line); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px; break-inside: avoid; page-break-inside: avoid; }
+  .card .head { display: flex; align-items: center; gap: 10px; border-bottom: 2px solid var(--a); padding-bottom: 8px; margin-bottom: 10px; }
+  .card .head b { font-size: 1.1rem; color: var(--p); }
+  .card .body { display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center; }
+  .card .qr { width: 150px; height: 150px; } .card .qr img, .card .qr svg { width: 100%; height: 100%; }
+  .card .info div { margin: 3px 0; } .card .id { font-family: ui-monospace, Consolas, monospace; font-weight: 700; letter-spacing: 1px; }
+  .steps { margin-top: 10px; font-size: .85rem; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .steps div[dir="rtl"] { text-align: right; }
+  .link { font-size: .7rem; word-break: break-all; color: #5c7a82; margin-top: 8px; }
+  .err { color: #d64545; font-weight: 600; }
+  @media print { body { background: #fff; } .noprint { display: none !important; } .wrap { padding: 0; max-width: none; } .card { box-shadow: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="noprint">
+    <h1>WellPulse GWS – Enrolment cards</h1>
+    <p class="muted">Each card carries a QR code that opens the app pre-configured for one farmer. Print, cut, and hand out.</p>
+    <div class="panel">
+      <div class="row">
+        <div>
+          <label>App URL (where index.html is hosted)</label>
+          <input id="appUrl" placeholder="https://username.github.io/WellPulse-GWS/">
+        </div>
+        <div>
+          <label>Default language</label>
+          <select id="lang"><option value="ar">Arabic (العربية)</option><option value="en">English</option></select>
+        </div>
+      </div>
+      <label>Optional: include the backend API URL in the QR (only needed if app/js/config.js is not yet edited)</label>
+      <input id="apiUrl" placeholder="https://script.google.com/macros/s/.../exec (leave empty normally)">
+      <label>Farmers – one per line: <code>farmer_id, name, wells</code> (wells as <code>id:label | id:label</code>, optional)</label>
+      <textarea id="farmers">F001, أحمد محمد, W1:البئر الشمالي | W2:البئر الجنوبي
+F002, Fatma Ali, W1:Main well
+F003, سعيد حسن</textarea>
+      <button id="go">Generate cards</button>
+      <button class="ghost" onclick="window.print()">Print</button>
+      <div id="msg" class="err"></div>
+    </div>
+  </div>
+  <div id="cards" class="cards"></div>
+</div>
+<script>
+  (function () {
+    const $ = id => document.getElementById(id);
+    // Default app URL: this page lives in /admin/, so the app is one level up.
+    $('appUrl').value = location.href.replace(/admin\/[^/]*$/, '');
+
+    function parseLine(line) {
+      const parts = line.split(',').map(s => s.trim());
+      if (!parts[0]) return null;
+      const wells = (parts[2] || '').split('|').map(s => s.trim()).filter(Boolean).map(s => {
+        const [id, label] = s.split(':').map(x => x.trim()); return { id, label: label || id };
+      });
+      return { id: parts[0].toUpperCase(), name: parts[1] || '', wells };
+    }
+
+    function buildLink(base, f, lang, api) {
+      const u = new URL(base);
+      u.searchParams.set('f', f.id);
+      if (f.name) u.searchParams.set('n', f.name);
+      if (f.wells.length) u.searchParams.set('w', f.wells.map(w => w.id + ':' + w.label).join(','));
+      u.searchParams.set('l', lang);
+      if (api) u.searchParams.set('api', api);
+      return u.toString();
+    }
+
+    function card(f, link) {
+      const qr = qrcode(0, 'M'); qr.addData(link); qr.make();
+      const svg = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+      const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      return '<div class="card"><div class="head"><img src="../icons/icon-192.png" width="34" height="34" alt=""><b>WellPulse GWS</b></div>' +
+        '<div class="body"><div class="qr">' + svg + '</div><div class="info">' +
+        '<div><b>' + esc(f.name || '') + '</b></div><div class="id">' + esc(f.id) + '</div>' +
+        (f.wells.length ? '<div class="muted">' + f.wells.map(w => esc(w.label)).join(' · ') + '</div>' : '') + '</div></div>' +
+        '<div class="steps"><div dir="rtl">١. امسح الرمز بكاميرا الهاتف<br>٢. اضغط "تثبيت"<br>٣. اضغط "ابدأ" وسجّل القراءة</div>' +
+        '<div>1. Scan with the phone camera<br>2. Tap "Install"<br>3. Tap "Start" and log a reading</div></div>' +
+        '<div class="link">' + esc(link) + '</div></div>';
+    }
+
+    $('go').onclick = () => {
+      $('msg').textContent = '';
+      let base = $('appUrl').value.trim();
+      if (!/^https?:\/\//.test(base)) { $('msg').textContent = 'Enter a valid app URL starting with https://'; return; }
+      if (!base.endsWith('/') && !base.endsWith('.html')) base += '/';
+      const lang = $('lang').value, api = $('apiUrl').value.trim();
+      const farmers = $('farmers').value.split('\n').map(parseLine).filter(Boolean);
+      if (!farmers.length) { $('msg').textContent = 'Add at least one farmer line.'; return; }
+      $('cards').innerHTML = farmers.map(f => card(f, buildLink(base, f, lang, api))).join('');
+    };
+  })();
+</script>
+</body>
+</html>

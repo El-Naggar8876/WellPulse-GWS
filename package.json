@@ -1,0 +1,12 @@
+{
+  "name": "wellpulse-gws",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WellPulse GWS - offline-first PWA for farmers to log groundwater EC and temperature, synced to a Google Sheet.",
+  "scripts": {
+    "start": "node tools/mock-server.js 8080",
+    "test": "node tests/run-tests.js",
+    "e2e": "node tools/e2e-check.js"
+  },
+  "license": "MIT"
+}
