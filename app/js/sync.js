@@ -9,15 +9,21 @@ window.WP_SYNC = (function () {
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  /** Apps Script occasionally answers a transient 404/5xx on its redirect hop; retry once before giving up. */
+  const REQUEST_TIMEOUT_MS = 40000;
+
+  /** Apps Script can be slow (cold start) and occasionally answers a transient 404/5xx on its redirect hop:
+   *  each attempt is capped at REQUEST_TIMEOUT_MS and retried once before the reading is marked failed. */
   async function fetchJsonWithRetry(url, init) {
     let lastErr;
     for (let attempt = 0; attempt < 2; attempt++) {
+      const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = ctl ? setTimeout(() => ctl.abort(), REQUEST_TIMEOUT_MS) : null;
       try {
-        const res = await fetch(url, init);
+        const res = await fetch(url, ctl ? Object.assign({}, init, { signal: ctl.signal }) : init);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return await res.json();
       } catch (e) { lastErr = e; if (attempt === 0) await sleep(1500); }
+      finally { if (timer) clearTimeout(timer); }
     }
     throw lastErr;
   }
