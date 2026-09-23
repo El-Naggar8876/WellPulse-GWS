@@ -68,3 +68,5 @@ Apps Script free quotas are far above this project's needs (thousands of request
 Response: `{ "ok": true, "results": [ { "id": "uuid", "ok": true, "status": "inserted" | "duplicate" | "rejected", "reason": "…", "photo_url": "…" } ] }`
 
 `GET ?action=config&token=…&f=F001` → `{ ok, limits, farmer }`.
+
+`GET ?action=data&key=VIEWER_KEY[&since=epoch_ms]` → `{ ok, version, generated_at, config:{limits, classes, map, project_name}, wells, farmers, columns, readings }` (dashboard; readings are compact arrays in `columns` order).

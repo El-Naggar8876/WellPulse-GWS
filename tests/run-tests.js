@@ -158,5 +158,39 @@ test('processSubmit rejects non-array and oversized batches', () => {
   assert.strictEqual(G.processSubmit(new Array(201).fill({}), deps).ok, false);
 });
 
+console.log('\nbackend/Code.gs – dashboard & wells');
+test('configFromRows returns limits and dashboard settings with overrides', () => {
+  const c = G.configFromRows([['class_1_max', 1], ['map_center_lat', '30.5'], ['project_name', 'Test GWS'], ['ec_hard_max', 50], ['bogus', 9], ['map_zoom', '']]);
+  assert.strictEqual(c.dash.class1Max, 1); assert.strictEqual(c.dash.class2Max, 3); assert.strictEqual(c.dash.mapLat, 30.5); assert.strictEqual(c.dash.mapZoom, G.DEFAULT_DASH.mapZoom);
+  assert.strictEqual(c.dash.projectName, 'Test GWS'); assert.strictEqual(c.limits.ec.hardMax, 50);
+});
+test('wellsFromRows parses coordinates and skips blank rows', () => {
+  const w = G.wellsFromRows([['W1', 'F001', 'North', 30.1, 31.2, 'Village', 45, '', ''], ['W2', 'F001', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '']]);
+  assert.strictEqual(w.length, 2); assert.deepStrictEqual([w[0].lat, w[0].lon, w[0].depth_m], [30.1, 31.2, 45]); assert.strictEqual(w[1].label, 'W2'); assert.strictEqual(w[1].lat, null); assert.strictEqual(w[1].depth_m, null);
+});
+test('compactReadings maps by header, filters by since and sorts by time', () => {
+  const H = G.HEADERS; const row = v => H.map(h => v[h] === undefined ? '' : v[h]);
+  const rows = [row({ id: 'b', farmer_id: 'F', well_id: 'W', ts_epoch: 200, ec_ms_cm: 2, ec25_ms_cm: 2.1, temp_c: 20, lat: 30, lon: 31, flag: 'x' }), row({ id: 'a', farmer_id: 'F', well_id: 'W', ts_epoch: 100, ec_ms_cm: 1, ec25_ms_cm: '', temp_c: 21 }), row({ id: 'c', farmer_id: 'F', well_id: 'W', ts_epoch: '' })];
+  const out = G.compactReadings(H, rows, 0);
+  assert.strictEqual(out.length, 2); assert.strictEqual(out[0][0], 'a'); assert.strictEqual(out[1][0], 'b');
+  const ix = {}; G.DATA_COLUMNS.forEach((c, i) => { ix[c] = i; });
+  assert.strictEqual(out[1][ix.ec25], 2.1); assert.strictEqual(out[0][ix.ec25], null); assert.strictEqual(out[1][ix.lat], 30); assert.strictEqual(out[0][ix.lat], null);
+  assert.strictEqual(G.compactReadings(H, rows, 150).length, 1);
+});
+test('planWellUpserts appends unknown wells and fills missing coordinates only', () => {
+  const wellRows = [['W1', 'F001', 'North', '', '', '', '', '', ''], ['W2', 'F001', 'South', 30, 31, '', '', '', '']];
+  const recs = [{ well_id: 'W1', farmer_id: 'F001', lat: 30.1, lon: 31.1 }, { well_id: 'W2', farmer_id: 'F001', lat: 1, lon: 1 }, { well_id: 'W3', farmer_id: 'F002', well_label: 'New', lat: 29, lon: 32 }, { well_id: 'W3', farmer_id: 'F002', lat: 29.5, lon: 32.5 }, { well_id: 'W4', farmer_id: 'F002', lat: null, lon: null }];
+  const plan = G.planWellUpserts(wellRows, recs, 'T');
+  assert.deepStrictEqual(plan.update, [{ rowIndex: 0, lat: 30.1, lon: 31.1 }]);
+  assert.strictEqual(plan.append.length, 1); assert.deepStrictEqual(plan.append[0].slice(0, 5), ['W3', 'F002', 'New', 29, 32]); assert.strictEqual(plan.append[0].length, G.WELL_HEADERS.length);
+});
+test('processSubmit calls afterInsert only with newly inserted records', () => {
+  const sh = fakeSheet([G.HEADERS]); let got = null;
+  const deps = { sheet: sh, limits: G.DEFAULT_LIMITS, savePhoto: () => '', now: () => 'T', afterInsert: recs => { got = recs.map(r => r.id); } };
+  G.processSubmit([{ id: 'n1', farmer_id: 'F', ec_ms: 1, temp_c: 20, well_id: 'W', lat: 30, lon: 31 }, { id: 'n2', farmer_id: 'F', ec_ms: 999, temp_c: 20 }], deps);
+  assert.deepStrictEqual(got, ['n1']);
+  got = null; G.processSubmit([{ id: 'n1', farmer_id: 'F', ec_ms: 1, temp_c: 20 }], deps); assert.strictEqual(got, null);
+});
+
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

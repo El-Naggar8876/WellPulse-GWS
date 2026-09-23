@@ -1,6 +1,6 @@
 # WellPulse GWS
 
-**Live app:** <https://wellpulse-gws.vercel.app/> · **Enrolment cards:** <https://wellpulse-gws.vercel.app/admin/enroll.html> · Backup mirror: <https://el-naggar8876.github.io/WellPulse-GWS/app/> · Backend: Apps Script → Google Sheet *WellPulse GWS Readings* (deployed 22 Sep 2026).
+**Farmer app:** <https://wellpulse-gws.vercel.app/> · **Enrolment cards:** <https://wellpulse-gws.vercel.app/admin/enroll.html> · **Researcher dashboard (WellPulse Atlas):** <https://wellpulse-gws.vercel.app/dashboard/> (needs the viewer key) · Backend: Apps Script → Google Sheet *WellPulse GWS Readings* (deployed 22 Sep 2026).
 
 Offline-first mobile app for farmers in the GWS project to log groundwater **EC (salinity)** and **temperature** from a handheld meter, then send the readings to a shared Google Sheet whenever the phone has internet.
 
@@ -10,11 +10,13 @@ Offline-first mobile app for farmers in the GWS project to log groundwater **EC 
 - **Arabic by default, English available** – full right-to-left layout, Arabic-Indic digits accepted.
 - **Optional GPS and meter photo** – farmer can skip both.
 - **Live validation** – hard limits block impossible values, soft limits ask for confirmation, and a big jump from the previous reading asks "are you sure?". The limits are editable in the Sheet.
-- **Researchers see everything in a Google Sheet**, with nightly CSV/GeoJSON export to your Cloud Storage bucket for Earth Engine.
+- **Researchers see everything in a Google Sheet**, with optional nightly CSV/GeoJSON export to a Cloud Storage bucket for Earth Engine.
+- **WellPulse Atlas** – a bilingual researcher/policy dashboard (`app/dashboard/`): satellite map of wells coloured by FAO salinity class, KPIs, trend/class/monthly/scatter charts, per-well drill-down with sparkline, filters, CSV export, printable report, light/dark. Protected by a viewer key; reads the sheet live through the Apps Script `data` endpoint.
 
 ```
-app/        the PWA (deploy this folder to GitHub Pages)
-  admin/    enrol.html – prints QR enrolment cards
+app/        the PWA (hosted on Vercel; root directory of the deployment)
+  admin/    enroll.html – prints QR enrolment cards
+  dashboard/ WellPulse Atlas researcher dashboard
 backend/    Google Apps Script (Code.gs) + deployment guide
 tools/      mock-server.js (local test backend), e2e-check.js, make_icons.py
 tests/      unit tests (node tests/run-tests.js)
@@ -47,9 +49,9 @@ The e2e script drives a headless Chrome/Edge through enrolment, saving, offline 
 
 Follow [backend/README.md](backend/README.md). You end up with a Web App URL ending in `/exec`.
 
-### 2. App – hosting (Vercel, with GitHub Pages as mirror)
+### 2. App – hosting (Vercel)
 
-The app is hosted on Vercel (project `wellpulse-gws`, root directory `app`, linked to this GitHub repository, so every push to `main` redeploys it automatically). GitHub Pages serves the same files as a backup at the address above. Original GitHub Pages steps:
+The app is hosted on Vercel (project `wellpulse-gws`, root directory `app`, linked to this GitHub repository, so every push to `main` redeploys it automatically). GitHub Pages is not used (it would put the account name in the address). If you ever need it as a fallback:
 
 1. Put the Web App URL in [app/js/config.js](app/js/config.js) as `API_URL`. Change `API_TOKEN` to something private and set the same value as `TOKEN` in `Code.gs`.
 2. Push this repository to GitHub. In the repository settings choose **Pages → Deploy from a branch → `main` / `/ (root)`**.
@@ -71,6 +73,8 @@ The app stores the profile on first open and cleans the URL. The card also works
 
 ### 4. Researcher views
 
+- **WellPulse Atlas dashboard** – `https://wellpulse-gws.vercel.app/dashboard/?key=<VIEWER_KEY>`. The key is `VIEWER_KEY` in `Code.gs`; the "copy share link" button in the dashboard produces the full link. Map centre/zoom, salinity class thresholds and the project title are read from the **Config** tab (`map_center_lat`, `map_center_lon`, `map_zoom`, `class_1_max`, `class_2_max`, `project_name`), so the same dashboard works for any country.
+- **Wells registry** – the **Wells** tab (`well_id, farmer_id, label, lat, lon, village, depth_m, notes, updated_at`). The app fills coordinates automatically from the first GPS-tagged reading of a well; researchers can add or correct rows by hand. To bulk-import a list, put the rows in `IMPORT_ROWS` in `Code.gs` and run `importWellsFromCode()` from the Apps Script editor.
 - **Google Sheet** – share it with the research group (Viewer). The `Readings` tab is the raw log; add pivot tabs freely.
 - **Looker Studio** (free) – *Create → Report → Google Sheets → Readings*. Add a map (lat/lon), a time series of `ec25_ms_cm` by `well_id`, and a farmer filter. Share the report link with the team.
 - **Earth Engine** – after `installNightlyTrigger()` in Apps Script and a bucket name in `GCS_BUCKET`, the script writes `gs://<bucket>/wellpulse/readings.csv` and `readings.geojson` every night. Ingest with `earthengine upload table --asset_id=projects/<proj>/assets/gws_readings gs://<bucket>/wellpulse/readings.csv` (or from Colab/geemap), then `ee.FeatureCollection('projects/<proj>/assets/gws_readings')`.
