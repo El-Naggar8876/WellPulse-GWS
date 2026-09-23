@@ -389,6 +389,17 @@ function importWellsFromCode() {
   Logger.log('Import done, wells added: ' + added);
 }
 
+/** Utility: set one key in the Config tab (adds the row if missing). Edit PROJECT_NAME_FIX and run fixProjectName() from the editor. */
+var PROJECT_NAME_FIX = 'GWS-SENCE Groundwater Monitoring';
+function setConfigValue(key, value) {
+  var c = sheet(SHEET_CONFIG);
+  var n = c.getLastRow();
+  var keys = n > 1 ? c.getRange(2, 1, n - 1, 1).getValues() : [];
+  for (var i = 0; i < keys.length; i++) { if (String(keys[i][0]).trim() === key) { c.getRange(i + 2, 2).setValue(value); return 'updated ' + key; } }
+  c.appendRow([key, value, '']); return 'added ' + key;
+}
+function fixProjectName() { Logger.log(setConfigValue('project_name', PROJECT_NAME_FIX)); }
+
 /* ============================ export to Cloud Storage / GEE ============================ */
 
 function readAll() {
