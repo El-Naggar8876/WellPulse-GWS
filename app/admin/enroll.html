@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WellPulse GWS – Farmer enrolment cards</title>
+<title>WellPulse · GWS-SENCE – Farmer enrolment cards</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <style>
   :root { --p: #0b5e6b; --a: #22b8cf; --line: #d6e5e9; --bg: #eef6f8; }
@@ -20,6 +20,10 @@
   .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
   .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px; break-inside: avoid; page-break-inside: avoid; }
   .card .head { display: flex; align-items: center; gap: 10px; border-bottom: 2px solid var(--a); padding-bottom: 8px; margin-bottom: 10px; }
+  .card .head .proj { margin-inline-start: auto; width: 40px; height: 40px; border-radius: 50%; }
+  .card .partners { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .card .partners img { height: 20px; width: auto; max-width: 110px; object-fit: contain; }
+  .pagehead { display: flex; align-items: center; gap: 14px; } .pagehead img { width: 64px; height: 64px; border-radius: 50%; }
   .card .head b { font-size: 1.1rem; color: var(--p); }
   .card .body { display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center; }
   .card .qr { width: 150px; height: 150px; } .card .qr img, .card .qr svg { width: 100%; height: 100%; }
@@ -34,7 +38,7 @@
 <body>
 <div class="wrap">
   <div class="noprint">
-    <h1>WellPulse GWS – Enrolment cards</h1>
+    <div class="pagehead"><img src="../brand/gws-sence-128.webp" alt="GWS-SENCE"><div><h1>WellPulse · GWS-SENCE – Enrolment cards</h1></div></div>
     <p class="muted">Each card carries a QR code that opens the app pre-configured for one farmer. Print, cut, and hand out.</p>
     <div class="panel">
       <div class="row">
@@ -89,13 +93,13 @@ F003, سعيد حسن</textarea>
       const qr = qrcode(0, 'M'); qr.addData(link); qr.make();
       const svg = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
       const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-      return '<div class="card"><div class="head"><img src="../icons/icon-192.png" width="34" height="34" alt=""><b>WellPulse GWS</b></div>' +
+      return '<div class="card"><div class="head"><img src="../icons/icon-192.png" width="34" height="34" alt=""><b>WellPulse</b><img class="proj" src="../brand/gws-sence-128.webp" alt="GWS-SENCE"></div>' +
         '<div class="body"><div class="qr">' + svg + '</div><div class="info">' +
         '<div><b>' + esc(f.name || '') + '</b></div><div class="id">' + esc(f.id) + '</div>' +
         (f.wells.length ? '<div class="muted">' + f.wells.map(w => esc(w.label)).join(' · ') + '</div>' : '') + '</div></div>' +
         '<div class="steps"><div dir="rtl">١. امسح الرمز بكاميرا الهاتف<br>٢. اضغط "تثبيت"<br>٣. اضغط "ابدأ" وسجّل القراءة</div>' +
         '<div>1. Scan with the phone camera<br>2. Tap "Install"<br>3. Tap "Start" and log a reading</div></div>' +
-        '<div class="link">' + esc(link) + '</div></div>';
+        '<div class="link">' + esc(link) + '</div><div class="partners"><img src="../brand/partners/ihe-delft-wdpp.png" alt="IHE Delft / UNESCO – Water and Development Partnership Programme" title="IHE Delft / UNESCO – Water and Development Partnership Programme"><img src="../brand/partners/heliopolis-university.png" alt="Heliopolis University for Sustainable Development" title="Heliopolis University for Sustainable Development"><img src="../brand/partners/zagazig-university.png" alt="Zagazig University" title="Zagazig University"><img src="../brand/partners/sekem.png" alt="SEKEM" title="SEKEM"><img src="../brand/partners/sekem-development-foundation.png" alt="SEKEM Development Foundation" title="SEKEM Development Foundation"></div></div>';
     }
 
     $('go').onclick = () => {

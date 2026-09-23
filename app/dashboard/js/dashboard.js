@@ -25,7 +25,7 @@
       wells_list: 'Wells', back: 'All wells', last_reading: 'Last reading', readings_n: '{n} readings', mean: 'Mean', min: 'Min', max: 'Max', trend: 'Trend', rising: 'Rising', falling: 'Falling', stable: 'Stable',
       farmer: 'Farmer', village: 'Village', depth: 'Depth (m)', coords: 'Coordinates', open_maps: 'Open in Google Maps', photos: 'Photos', no_readings_period: 'No readings in the selected period.',
       col_date: 'Date', col_farmer: 'Farmer', col_well: 'Well', col_ec25: 'EC25', col_ec: 'EC (raw)', col_temp: 'Temp °C', col_class: 'Class', col_gps: 'GPS', col_note: 'Note', col_photo: 'Photo',
-      empty: 'No readings yet. Once farmers start sending data it will appear here.', no_api: 'API_URL is not configured in js/config.js.', unit_ms: 'mS/cm',
+      empty: 'No readings yet. Once farmers start sending data it will appear here.', partners_title: 'In partnership with', no_api: 'API_URL is not configured in js/config.js.', unit_ms: 'mS/cm',
       month_short: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], cls_name: ['No data', 'Low', 'Moderate', 'High'], readings_word: 'readings', wells_word: 'wells'
     },
     ar: {
@@ -44,7 +44,7 @@
       wells_list: 'الآبار', back: 'كل الآبار', last_reading: 'آخر قراءة', readings_n: '{n} قراءة', mean: 'المتوسط', min: 'الأدنى', max: 'الأعلى', trend: 'الاتجاه', rising: 'صاعد', falling: 'هابط', stable: 'مستقر',
       farmer: 'المزارع', village: 'القرية', depth: 'العمق (م)', coords: 'الإحداثيات', open_maps: 'فتح في خرائط جوجل', photos: 'الصور', no_readings_period: 'لا توجد قراءات في الفترة المحددة.',
       col_date: 'التاريخ', col_farmer: 'المزارع', col_well: 'البئر', col_ec25: 'EC25', col_ec: 'EC (خام)', col_temp: 'الحرارة °C', col_class: 'الدرجة', col_gps: 'GPS', col_note: 'ملاحظة', col_photo: 'صورة',
-      empty: 'لا توجد قراءات بعد. ستظهر هنا فور أن يبدأ المزارعون بالإرسال.', no_api: 'لم يتم ضبط API_URL في js/config.js.', unit_ms: 'mS/cm',
+      empty: 'لا توجد قراءات بعد. ستظهر هنا فور أن يبدأ المزارعون بالإرسال.', partners_title: 'بالشراكة مع', no_api: 'لم يتم ضبط API_URL في js/config.js.', unit_ms: 'mS/cm',
       month_short: ['ينا', 'فبر', 'مار', 'أبر', 'ماي', 'يون', 'يول', 'أغس', 'سبت', 'أكت', 'نوف', 'ديس'], cls_name: ['بلا بيانات', 'منخفضة', 'متوسطة', 'مرتفعة'], readings_word: 'قراءة', wells_word: 'بئر'
     }
   };

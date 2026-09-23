@@ -1,8 +1,8 @@
-# WellPulse GWS
+# WellPulse · GWS-SENCE
 
 **Farmer app:** <https://wellpulse-gws.vercel.app/> · **Enrolment cards:** <https://wellpulse-gws.vercel.app/admin/enroll.html> · **Researcher dashboard (WellPulse Atlas):** <https://wellpulse-gws.vercel.app/dashboard/> (needs the viewer key) · Backend: Apps Script → Google Sheet *WellPulse GWS Readings* (deployed 22 Sep 2026).
 
-Offline-first mobile app for farmers in the GWS project to log groundwater **EC (salinity)** and **temperature** from a handheld meter, then send the readings to a shared Google Sheet whenever the phone has internet.
+Offline-first mobile app for farmers in the GWS-SENCE project to log groundwater **EC (salinity)** and **temperature** from a handheld meter, then send the readings to a shared Google Sheet whenever the phone has internet.
 
 - **Installs from a QR card** – no app store. Scan, tap Install, done.
 - **Works fully offline** – readings are saved on the phone with date, time and timezone.

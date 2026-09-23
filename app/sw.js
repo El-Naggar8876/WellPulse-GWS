@@ -1,11 +1,13 @@
 /* WellPulse GWS service worker: precache the app shell, cache-first for same-origin, network for the API. */
-const VERSION = '1.0.3';
+const VERSION = '1.1.0';
 const CACHE = 'wellpulse-' + VERSION;
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
   './css/app.css',
   './js/config.js', './js/i18n.js', './js/util.js', './js/db.js', './js/sync.js', './js/app.js',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png'
+  './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
+  './brand/gws-sence.webp', './brand/gws-sence-128.webp',
+  './brand/partners/ihe-delft-wdpp.png', './brand/partners/heliopolis-university.png', './brand/partners/zagazig-university.png', './brand/partners/sekem.png', './brand/partners/sekem-development-foundation.png'
 ];
 
 self.addEventListener('install', e => {

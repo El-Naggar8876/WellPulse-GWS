@@ -1,7 +1,7 @@
 {
-  "name": "WellPulse GWS",
+  "name": "WellPulse GWS-SENCE",
   "short_name": "WellPulse",
-  "description": "Offline-first groundwater EC and temperature logging for GWS farmers.",
+  "description": "Offline-first groundwater EC and temperature logging for GWS-SENCE farmers.",
   "id": "wellpulse-gws",
   "start_url": "./",
   "scope": "./",

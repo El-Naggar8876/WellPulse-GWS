@@ -3,8 +3,8 @@
  * For testing, these can be overridden via URL params: ?api=...&token=...
  */
 window.WP_CONFIG = {
-  APP_NAME: 'WellPulse GWS',
-  APP_VERSION: '1.0.3',
+  APP_NAME: 'WellPulse GWS-SENCE',
+  APP_VERSION: '1.1.0',
   // Apps Script Web App URL (ends with /exec). Leave empty until deployed.
   API_URL: 'https://script.google.com/macros/s/AKfycbwd-libdKQm1InaITlSUZQ9bThLm_dQP_nmgY2FhS9c7r3sGajdVjIOqJ282z0fv0PQ/exec',
   // Shared project token; must match TOKEN in backend/Code.gs.

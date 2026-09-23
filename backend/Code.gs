@@ -35,7 +35,7 @@ var DEFAULT_LIMITS = {
   temp: { softMin: 10, softMax: 40, hardMin: -5, hardMax: 60 }
 };
 // Defaults for the dashboard: FAO irrigation-water salinity classes (mS/cm) and map start view (Egypt).
-var DEFAULT_DASH = { class1Max: 0.7, class2Max: 3.0, mapLat: 26.8, mapLon: 30.8, mapZoom: 5.3, projectName: 'GWS Groundwater Monitoring' };
+var DEFAULT_DASH = { class1Max: 0.7, class2Max: 3.0, mapLat: 26.8, mapLon: 30.8, mapZoom: 5.3, projectName: 'GWS-SENCE Groundwater Monitoring' };
 
 /* ============================ pure helpers (unit-tested) ============================ */
 
@@ -348,7 +348,7 @@ function setup() {
     ['map_center_lat', 26.8, 'Dashboard: map start latitude'],
     ['map_center_lon', 30.8, 'Dashboard: map start longitude'],
     ['map_zoom', 5.3, 'Dashboard: map start zoom'],
-    ['project_name', 'GWS Groundwater Monitoring', 'Dashboard: project title shown in the header']
+    ['project_name', 'GWS-SENCE Groundwater Monitoring', 'Dashboard: project title shown in the header']
   ].forEach(function (row) { if (!existing[row[0]]) c.appendRow(row); });
   var l = s.getSheetByName(SHEET_LOG) || s.insertSheet(SHEET_LOG);
   if (l.getLastRow() === 0) l.appendRow(['time', 'message']);

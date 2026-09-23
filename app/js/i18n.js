@@ -3,8 +3,10 @@
   const dict = {
     ar: {
       dir: 'rtl',
-      app_name: 'WellPulse GWS',
+      app_name: 'WellPulse · GWS-SENCE',
       tagline: 'سجّل قراءة مياهك الجوفية في ثوانٍ',
+      project_line: 'مشروع GWS-SENCE لرصد المياه الجوفية',
+      partners_title: 'بالشراكة مع',
       welcome: 'أهلاً',
       ready_q: 'هل أنت جاهز لإدخال القراءة؟',
       start: 'ابدأ',
@@ -109,8 +111,10 @@
     },
     en: {
       dir: 'ltr',
-      app_name: 'WellPulse GWS',
+      app_name: 'WellPulse · GWS-SENCE',
       tagline: 'Log your groundwater reading in seconds',
+      project_line: 'GWS-SENCE groundwater monitoring project',
+      partners_title: 'In partnership with',
       welcome: 'Hello',
       ready_q: 'Ready to enter a reading?',
       start: 'Start',

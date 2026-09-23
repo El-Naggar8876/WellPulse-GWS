@@ -25,6 +25,12 @@ a { color: var(--primary); }
 /* Gate */
 .gate { position: fixed; inset: 0; display: grid; place-items: center; padding: 20px; z-index: 50; background: radial-gradient(900px 500px at 50% 0%, var(--bg2), var(--bg)); }
 .gate-card { width: min(420px, 100%); background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 32px 28px; text-align: center; box-shadow: var(--shadow); }
+.gate-logo img { width: 120px; height: 120px; border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.partners { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 18px; }
+.partners img { height: 40px; width: auto; max-width: 200px; object-fit: contain; background: #fff; border-radius: 8px; padding: 5px 8px; }
+.gate-partners { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); } .gate-partners img { height: 30px; }
+.brand-proj { width: 40px; height: 40px; border-radius: 50%; margin-inline-start: 6px; }
+.partners-card .partners { justify-content: flex-start; }
 .gate-card h1 { margin: 10px 0 4px; font-size: 1.8rem; letter-spacing: .3px; } .gate-card h1 span, .brand-name span { color: var(--primary); font-weight: 400; }
 .gate-card form { display: flex; gap: 8px; margin-top: 18px; }
 .gate-card input { flex: 1; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--bg); outline: none; }

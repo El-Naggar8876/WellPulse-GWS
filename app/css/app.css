@@ -202,6 +202,11 @@ h1 { font-size: 1.6rem; margin: .4rem 0; } h2 { font-size: 1.3rem; margin: .2rem
 .hero-art { position: relative; width: 120px; height: 120px; margin: 0 auto 10px; }
 .hero-art .ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--accent); opacity: .5; animation: pulse 2.6s ease-out infinite; }
 .hero-art .r2 { animation-delay: 1.3s; }
-.hero-art .drop { position: absolute; inset: 28px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: linear-gradient(135deg, var(--accent), var(--primary)); box-shadow: 0 10px 30px rgba(11,94,107,.35); }
+.hero-art .emblem { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); border-radius: 50%; box-shadow: 0 10px 30px rgba(11,94,107,.35); background: #efece4; }
+.hero-art { width: 150px; height: 150px; }
+.partners { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 16px; padding: 10px 6px; }
+.partners img { height: 34px; width: auto; max-width: 150px; object-fit: contain; background: #fff; border-radius: 8px; padding: 4px 6px; }
+.partners.small img { height: 26px; }
+.about-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; } .about-brand img { width: 56px; height: 56px; border-radius: 50%; }
 
 @media (min-width: 600px) { .views { padding-top: 8px; } }
