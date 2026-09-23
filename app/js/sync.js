@@ -7,16 +7,29 @@ window.WP_SYNC = (function () {
   function token() { return (localStorage.getItem('wp_token') || window.WP_CONFIG.API_TOKEN || '').trim(); }
   function hasServer() { return !!apiUrl(); }
 
-  async function post(payload) {
-    const res = await fetch(apiUrl(), {
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  /** Apps Script occasionally answers a transient 404/5xx on its redirect hop; retry once before giving up. */
+  async function fetchJsonWithRetry(url, init) {
+    let lastErr;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const res = await fetch(url, init);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return await res.json();
+      } catch (e) { lastErr = e; if (attempt === 0) await sleep(1500); }
+    }
+    throw lastErr;
+  }
+
+  function post(payload) {
+    return fetchJsonWithRetry(apiUrl(), {
       method: 'POST',
       // text/plain avoids a CORS preflight, which Apps Script cannot answer.
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload),
       redirect: 'follow'
     });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.json();
   }
 
   /** Strip local-only fields before upload. */
@@ -95,9 +108,7 @@ window.WP_SYNC = (function () {
     u.searchParams.set('action', 'config');
     u.searchParams.set('token', token());
     if (farmerId) u.searchParams.set('f', farmerId);
-    const res = await fetch(u.toString(), { redirect: 'follow' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.json();
+    return fetchJsonWithRetry(u.toString(), { redirect: 'follow' });
   }
 
   return { syncAll, fetchConfig, apiUrl, hasServer, toPayload, isSyncing: () => syncing };

@@ -1,5 +1,5 @@
 /* WellPulse GWS service worker: precache the app shell, cache-first for same-origin, network for the API. */
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 const CACHE = 'wellpulse-' + VERSION;
 const SHELL = [
   './', './index.html', './manifest.webmanifest',

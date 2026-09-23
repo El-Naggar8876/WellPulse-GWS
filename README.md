@@ -1,6 +1,6 @@
 # WellPulse GWS
 
-**Live app:** <https://el-naggar8876.github.io/WellPulse-GWS/app/> · **Enrolment cards:** <https://el-naggar8876.github.io/WellPulse-GWS/app/admin/enroll.html> · Backend: Apps Script → Google Sheet *WellPulse GWS Readings* (deployed 22 Sep 2026).
+**Live app:** <https://wellpulse-gws.vercel.app/> · **Enrolment cards:** <https://wellpulse-gws.vercel.app/admin/enroll.html> · Backup mirror: <https://el-naggar8876.github.io/WellPulse-GWS/app/> · Backend: Apps Script → Google Sheet *WellPulse GWS Readings* (deployed 22 Sep 2026).
 
 Offline-first mobile app for farmers in the GWS project to log groundwater **EC (salinity)** and **temperature** from a handheld meter, then send the readings to a shared Google Sheet whenever the phone has internet.
 
@@ -47,7 +47,9 @@ The e2e script drives a headless Chrome/Edge through enrolment, saving, offline 
 
 Follow [backend/README.md](backend/README.md). You end up with a Web App URL ending in `/exec`.
 
-### 2. App – GitHub Pages
+### 2. App – hosting (Vercel, with GitHub Pages as mirror)
+
+The app is hosted on Vercel (project `wellpulse-gws`, root directory `app`, linked to this GitHub repository, so every push to `main` redeploys it automatically). GitHub Pages serves the same files as a backup at the address above. Original GitHub Pages steps:
 
 1. Put the Web App URL in [app/js/config.js](app/js/config.js) as `API_URL`. Change `API_TOKEN` to something private and set the same value as `TOKEN` in `Code.gs`.
 2. Push this repository to GitHub. In the repository settings choose **Pages → Deploy from a branch → `main` / `/ (root)`**.
